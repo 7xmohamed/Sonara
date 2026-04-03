@@ -6,8 +6,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const statusIndicator = document.getElementById('status-indicator');
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tabId = tab.id.toString();
-    
+    const tabId = tab.id;
+    let isCapturing = false;
+
     // Update tab-url label with current hostname
     try {
         const url = new URL(tab.url);
@@ -16,8 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('tab-url').textContent = 'Current Tab';
     }
 
-    const stored = await chrome.storage.local.get(tabId);
-    let currentVolume = stored[tabId] || 100;
+    const stored = await chrome.storage.local.get(tabId.toString());
+    let currentVolume = stored[tabId.toString()] || 100;
 
     const updateUI = (val) => {
         slider.value = val;
@@ -59,21 +60,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateUI(currentVolume);
 
     /**
-     * Sends the volume value to the content script.
-     * Handles re-injection if the script has been purged from the tab's context.
+     * Communicates with background for tab capture boosting.
+     * Starts capture directly in popup context to satisfy user gesture.
      */
     const applyVolume = async (val) => {
-        try {
-            await chrome.tabs.sendMessage(tab.id, { action: 'setVolume', value: val });
-            chrome.storage.local.set({ [tabId]: val });
-        } catch (e) {
-            // Attempt to re-inject and retry if communication fails
-            await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ['content.js']
+        // Save volume locally for the tab
+        chrome.storage.local.set({ [tabId.toString()]: val });
+
+        if (!isCapturing && val !== 100) {
+            // Initiate tab capture - must be within this event listener thread for gesture
+            chrome.tabCapture.getMediaStreamId({ targetTabId: tabId }, (streamId) => {
+                if (chrome.runtime.lastError) {
+                    // This can happen if capture is already active on this tab
+                    chrome.runtime.sendMessage({ action: 'setVolume', value: val, tabId: tabId });
+                    return;
+                }
+                
+                isCapturing = true;
+                chrome.runtime.sendMessage({
+                    action: 'startCapture',
+                    tabId: tabId,
+                    streamId: streamId,
+                    value: val
+                });
             });
-            await chrome.tabs.sendMessage(tab.id, { action: 'setVolume', value: val });
-            chrome.storage.local.set({ [tabId]: val });
+        } else {
+            // Already capturing, just update volume
+            chrome.runtime.sendMessage({
+                action: 'setVolume',
+                value: val,
+                tabId: tabId
+            });
         }
     };
 

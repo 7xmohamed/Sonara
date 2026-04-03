@@ -3,7 +3,7 @@
   "name": "Sonara",
   "version": "1.0.0",
   "description": "Boost audio volume up to 600% on any tab with a sleek, powerful interface.",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "tabCapture", "offscreen"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
