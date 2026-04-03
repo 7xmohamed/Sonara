@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const tabId = tab.id.toString();
+    
+    // Update tab-url label with current hostname
+    try {
+        const url = new URL(tab.url);
+        document.getElementById('tab-url').textContent = url.hostname;
+    } catch (e) {
+        document.getElementById('tab-url').textContent = 'Current Tab';
+    }
 
     const stored = await chrome.storage.local.get(tabId);
     let currentVolume = stored[tabId] || 100;
