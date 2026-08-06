@@ -5,39 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sonara</title>
   <link rel="stylesheet" href="popup.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
+
     <div class="header">
       <div class="logo-text">Son<span>ara</span></div>
       <div class="status-indicator" id="status-indicator">ON</div>
     </div>
 
-    <div class="main">
-      <div class="display-card">
-        <div class="percentage-label" id="percentage-label">100%</div>
-        <div class="sub-label" id="tab-url">Current Tab Boost</div>
-      </div>
+    <div class="display-card">
+      <div class="percentage-label" id="percentage-label">100%</div>
+      <div class="sub-label" id="tab-url">Current Tab</div>
+    </div>
 
-      <div class="slider-wrapper">
-        <input type="range" min="0" max="600" value="100" class="slider" id="volume-slider">
-        <div class="slider-track" id="slider-track"></div>
-      </div>
+    <div class="slider-wrapper">
+      <input type="range" min="0" max="600" value="100" class="slider" id="volume-slider">
+      <div class="slider-track" id="slider-track"></div>
+    </div>
 
-      <div class="quick-presets">
-        <button class="preset-btn" data-value="100">Reset</button>
-        <button class="preset-btn" data-value="200">2x</button>
-        <button class="preset-btn" data-value="400">4x</button>
-        <button class="preset-btn" data-value="600">MAX</button>
-      </div>
+    <div class="quick-presets">
+      <button class="preset-btn" data-value="100">Reset</button>
+      <button class="preset-btn" data-value="200">2×</button>
+      <button class="preset-btn" data-value="400">4×</button>
+      <button class="preset-btn" data-value="600">Max</button>
     </div>
 
     <div class="footer">
-      <a href="https://github.com/7xmohamed/Sonara" id="github-link">v1.0.0 | GitHub</a>
+      <a href="https://github.com/7xmohamed/Sonara" id="github-link">v1.0.0 · GitHub</a>
     </div>
+
   </div>
   <script src="popup.js"></script>
 </body>

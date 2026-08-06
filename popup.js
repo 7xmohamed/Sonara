@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabId = tab.id;
     let isCapturing = false;
 
+    // Check if this tab is already being captured to avoid capture restarts
+    try {
+        const capturedTabs = await chrome.tabCapture.getCapturedTabs();
+        isCapturing = capturedTabs.some(t => t.tabId === tabId && (t.status === 'pending' || t.status === 'active'));
+    } catch (e) {
+        console.error('Sonara: Failed to get captured tabs:', e);
+    }
+
     // Update tab-url label with current hostname
     try {
         const url = new URL(tab.url);
